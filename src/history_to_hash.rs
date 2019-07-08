@@ -16,7 +16,13 @@ pub fn read_history() -> HashMap<PathBuf, DirInfo> {
         Ok(e) => e,
         Err(_) => 0,
     };
-    let history_hash: HashMap<PathBuf, DirInfo> =
-        serde_json::from_str(&history).unwrap_or(HashMap::new());
+    let history_hash: HashMap<PathBuf, DirInfo> = history_hash(history);
     history_hash
+}
+
+pub fn history_hash(history: String) -> HashMap<PathBuf, DirInfo> {
+    let mut hm: HashMap<PathBuf, DirInfo> =
+        serde_json::from_str(&history).unwrap_or(HashMap::new());
+    hm.retain(|k, _| k.exists());
+    hm
 }
