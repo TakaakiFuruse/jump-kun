@@ -1,8 +1,6 @@
 use skim::{Skim, SkimOptions};
 use std::io::Cursor;
 
-// SkimにDirectoryの文字列を渡して絞り込む
-
 pub fn select(found_dirs: String, options: &SkimOptions) -> String {
     let items = Skim::run_with(&options, Some(Box::new(Cursor::new(found_dirs))))
         .map(|out| out.selected_items)
