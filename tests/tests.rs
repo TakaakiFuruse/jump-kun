@@ -2,7 +2,7 @@ use dirs::home_dir;
 use jump_kun::dir_sorter::to_sorted_string;
 use jump_kun::history_to_hash::history_hash;
 use jump_kun::structs::DirInfo;
-use jump_kun::walker::start_walking;
+use jump_kun::walker::{start_walking_down, start_walking_up};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
@@ -25,10 +25,9 @@ mod tests {
         let result = history_hash(serde_json::to_string(&history).unwrap());
         assert_eq!(result.len(), 1);
     }
-
     #[test]
-    fn test_start_walking_returns_hashmap() {
-        let result_hash = start_walking(home_dir().unwrap());
+    fn test_start_walking_up_returns_hashmap() {
+        let result_hash = start_walking_up(home_dir().unwrap());
         assert_eq!(result_hash.len() > 1, true);
         for (_, v) in result_hash.iter() {
             assert_eq!(v.cd_count, 0);
@@ -37,8 +36,24 @@ mod tests {
     }
 
     #[test]
-    fn test_start_walking_return_empty_hashmap_if_dir_not_exist() {
-        let result_hash = start_walking(PathBuf::from(r"\this\doesnt\exists"));
+    fn test_start_walking_up_return_empty_hashmap_if_dir_not_exist() {
+        let result_hash = start_walking_up(PathBuf::from(r"\this\doesnt\exists"));
+        assert_eq!(result_hash.len(), 0);
+    }
+
+    #[test]
+    fn test_start_walking_down_returns_hashmap() {
+        let result_hash = start_walking_down(home_dir().unwrap());
+        assert_eq!(result_hash.len() > 1, true);
+        for (_, v) in result_hash.iter() {
+            assert_eq!(v.cd_count, 0);
+            assert_eq!(v.from_history, false);
+        }
+    }
+
+    #[test]
+    fn test_start_walking_down_return_empty_hashmap_if_dir_not_exist() {
+        let result_hash = start_walking_down(PathBuf::from(r"\this\doesnt\exists"));
         assert_eq!(result_hash.len(), 0);
     }
 
