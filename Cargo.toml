@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["TakaakiFuruse <takaakifuruse@gmail.com>"]
 edition = "2018"
 
+[[bin]]
+name = "jump-kun"
+path = "src/main.rs"
+
 [dependencies]
 walkdir="2.2.7"
 "skim" = { git = "https://github.com/lotabout/skim" }
