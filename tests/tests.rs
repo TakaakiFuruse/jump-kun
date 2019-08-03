@@ -1,90 +1,123 @@
 use dirs::home_dir;
-use jump_kun::dir_sorter::to_sorted_string;
-use jump_kun::history_to_hash::history_hash;
-use jump_kun::structs::DirInfo;
-use jump_kun::walker::start_walking;
-use std::collections::HashMap;
+use jump_kun::enums::DirType;
+use jump_kun::structs::DirBuilder;
+use jump_kun::walker::{start_walking_around, start_walking_down, start_walking_up};
 use std::path::PathBuf;
 
 #[cfg(test)]
-mod tests {
+mod tests_for_history {
+    use super::*;
+    use dirs::home_dir;
+    use jump_kun::history::read;
+    use jump_kun::structs::{Dir, DirBuilder, DirVec};
+    use serde_json;
+    use sled::Db;
+
+    #[test]
+    fn read_returns_dirvec_with_existing_dirs() {
+        // Treeをスコープ内で殺さないとロックが外れない
+        {
+            let tree = Db::open("./tests/test_db").unwrap();
+            tree.insert(
+                home_dir().unwrap().to_str().unwrap().as_bytes(),
+                serde_json::to_string(&Dir::default()).unwrap().as_bytes(),
+            )
+            .expect("could not insert test data");
+
+            tree.insert(
+                "/not/exists/dir".as_bytes(),
+                serde_json::to_string(
+                    &DirBuilder::default()
+                        .path(PathBuf::from("/not/exists/dir"))
+                        .dirtype(DirType::NotSure)
+                        .build()
+                        .unwrap(),
+                )
+                .unwrap()
+                .as_bytes(),
+            )
+            .expect("could not insert test data");
+            tree.flush().expect("flush faild");
+        }
+        let dirvec = read("./tests/test_db");
+        let result_vec = DirVec {
+            map: vec![Dir::default()],
+        };
+        assert_eq!(dirvec, result_vec);
+    }
+
+}
+
+#[cfg(test)]
+mod tests_for_walking {
     use super::*;
 
     #[test]
-    fn test_history_hash_returns_empty_hashmap_if_dir_not_exist() {
-        let mut history: HashMap<PathBuf, DirInfo> = HashMap::new();
-        history.insert(PathBuf::from(r"\this\doesnt\exists"), DirInfo::new(1, true));
-        let result = history_hash(serde_json::to_string(&history).unwrap());
-        assert_eq!(result.is_empty(), true);
-    }
-
-    #[test]
-    fn test_history_hash_returns_empty_hashmap_if_dir_exists() {
-        let mut history: HashMap<PathBuf, DirInfo> = HashMap::new();
-        history.insert(home_dir().unwrap(), DirInfo::new(1, true));
-        let result = history_hash(serde_json::to_string(&history).unwrap());
-        assert_eq!(result.len(), 1);
-    }
-
-    #[test]
-    fn test_start_walking_returns_hashmap() {
-        let result_hash = start_walking(home_dir().unwrap());
-        assert_eq!(result_hash.len() > 1, true);
-        for (_, v) in result_hash.iter() {
-            assert_eq!(v.cd_count, 0);
-            assert_eq!(v.from_history, false);
+    fn start_walking_down_returns_dirvec() {
+        let dir = DirBuilder::default()
+            .path(home_dir().unwrap())
+            .build()
+            .unwrap();
+        let result = start_walking_down(dir);
+        assert_eq!(result.map.len() > 1, true);
+        for dir in result.map {
+            assert_eq!(dir.cd_count, 0);
+            assert_eq!(dir.dirtype, DirType::ChildDir);
         }
     }
 
     #[test]
-    fn test_start_walking_return_empty_hashmap_if_dir_not_exist() {
-        let result_hash = start_walking(PathBuf::from(r"\this\doesnt\exists"));
-        assert_eq!(result_hash.len(), 0);
+    fn start_walking_up_returns_dirvec() {
+        let dir = DirBuilder::default()
+            .path(home_dir().unwrap())
+            .build()
+            .unwrap();
+        let result = start_walking_up(dir);
+        assert_eq!(result.map.len() > 1, true);
+        for dir in result.map {
+            assert_eq!(dir.cd_count, 0);
+            assert_eq!(dir.dirtype, DirType::ParentDir);
+        }
     }
 
     #[test]
-    fn test_to_sorted_string_sort_order() {
-        // Current directory is on top.
-        // Sub directory of current will be next.
-        // Then sort by cd counts
-        let mut found_dirs = HashMap::new();
-        found_dirs.insert(
-            PathBuf::from(r"/test/1"),
-            DirInfo {
-                cd_count: 1,
-                from_history: false,
-            },
-        );
-        found_dirs.insert(
-            PathBuf::from(r"/test/2"),
-            DirInfo {
-                cd_count: 2,
-                from_history: false,
-            },
-        );
-        found_dirs.insert(
-            PathBuf::from(r"/test/3"),
-            DirInfo {
-                cd_count: 0,
-                from_history: false,
-            },
-        );
-        found_dirs.insert(
-            PathBuf::from(r"/sample/1"),
-            DirInfo {
-                cd_count: 0,
-                from_history: false,
-            },
-        );
-        found_dirs.insert(
-            PathBuf::from(r"/sample/2"),
-            DirInfo {
-                cd_count: 1,
-                from_history: false,
-            },
-        );
-        let current_directory = PathBuf::from("/test/3");
-        let result = to_sorted_string(found_dirs, current_directory);
-        assert_eq!(result, "/test/3\n/test/2\n/test/1\n/sample/2\n/sample/1\n");
+    fn start_walking_around_returns_dirvec() {
+        let dir = DirBuilder::default()
+            .path(home_dir().unwrap())
+            .build()
+            .unwrap();
+        let result = start_walking_around(dir);
+        assert_eq!(result.map.len() > 1, true);
+        for dir in result.map {
+            assert_eq!(dir.cd_count, 0);
+        }
+    }
+
+    #[test]
+    fn start_walking_around_return_empty_dirvec_if_dir_not_exist() {
+        let dir = DirBuilder::default()
+            .path(PathBuf::from(r"\this\doesnt\exists"))
+            .build()
+            .unwrap();
+        let result_hash = start_walking_around(dir);
+        assert_eq!(result_hash.map.len(), 0);
+    }
+    #[test]
+    fn start_walking_down_return_empty_dirvec_if_dir_not_exist() {
+        let dir = DirBuilder::default()
+            .path(PathBuf::from(r"\this\doesnt\exists"))
+            .build()
+            .unwrap();
+        let result_hash = start_walking_down(dir);
+        assert_eq!(result_hash.map.len(), 0);
+    }
+    #[test]
+    fn start_walking_up_return_empty_dirvec_if_dir_not_exist() {
+        let dir = DirBuilder::default()
+            .path(PathBuf::from(r"\this\doesnt\exists"))
+            .build()
+            .unwrap();
+        let result_hash = start_walking_up(dir);
+        assert_eq!(result_hash.map.len(), 0);
     }
 }

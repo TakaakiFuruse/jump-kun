@@ -1,40 +1,60 @@
-use super::structs::DirInfo;
-use super::walker::start_walking;
-use std::collections::HashMap;
+use super::enums::DirType;
+use super::structs::{Dir, DirBuilder, DirVec};
+use super::walker::{start_walking_around, start_walking_down, start_walking_up};
+
 use std::env;
 use std::path::{Path, PathBuf};
 
-pub fn find_dirs() -> HashMap<PathBuf, DirInfo> {
+pub fn find_dirs() -> DirVec {
     match env::var("DOWN_FROM") {
-        Ok(dir) => start_walking(from_specific_directory(dir)),
+        Ok(dir) => start_walking_down(from_specific_directory(dir)),
         Err(_) => match env::var("UP_FROM") {
-            Ok(dir) => start_walking(from_parent_directory_or_root(dir)),
-            Err(_) => start_walking(from_current_directory()),
+            Ok(dir) => start_walking_up(from_parent_directory_or_root(dir)),
+            Err(_) => start_walking_around(from_current_directory()),
         },
     }
 }
 
-fn from_specific_directory(dir: String) -> PathBuf {
-    PathBuf::from(dir)
+fn from_specific_directory(dir: String) -> Dir {
+    DirBuilder::default()
+        .path(PathBuf::from(dir))
+        .dirtype(DirType::CurrentDir)
+        .build()
+        .unwrap()
 }
 
-fn from_current_directory() -> PathBuf {
-    env::current_dir().unwrap()
+fn from_current_directory() -> Dir {
+    DirBuilder::default()
+        .path(env::current_dir().unwrap())
+        .dirtype(DirType::CurrentDir)
+        .build()
+        .unwrap()
 }
 
-fn from_parent_directory_or_root(dir: String) -> PathBuf {
-    PathBuf::from(dir)
-        .parent()
-        .unwrap_or(Path::new("/"))
-        .to_path_buf()
+fn from_parent_directory_or_root(dir: String) -> Dir {
+    DirBuilder::default()
+        .path(
+            PathBuf::from(dir)
+                .parent()
+                .unwrap_or_else(|| Path::new("/"))
+                .to_path_buf(),
+        )
+        .dirtype(DirType::CurrentDir)
+        .build()
+        .unwrap()
 }
 
-pub fn current_dir() -> PathBuf {
-    match env::var("DOWN_FROM") {
+pub fn current_dir() -> Dir {
+    let pathbuf = match env::var("DOWN_FROM") {
         Ok(dir) => PathBuf::from(dir),
         Err(_) => match env::var("UP_FROM") {
             Ok(dir) => PathBuf::from(dir).parent().unwrap().to_path_buf(),
             Err(_) => env::current_dir().unwrap(),
         },
-    }
+    };
+    DirBuilder::default()
+        .path(pathbuf)
+        .dirtype(DirType::CurrentDir)
+        .build()
+        .unwrap()
 }

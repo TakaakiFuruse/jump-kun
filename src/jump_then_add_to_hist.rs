@@ -1,27 +1,40 @@
-use super::structs::DirInfo;
-use dirs::home_dir;
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::BufWriter;
-use std::io::Write;
+use super::structs::Dir;
+use serde_json;
+use sled::Db;
 use std::path::PathBuf;
+use std::str;
 
-pub fn jump_then_add_to_hist(item: String, mut history_hash: HashMap<PathBuf, DirInfo>) {
-    if item.len() > 0 {
-        print!("{}", item);
-
-        let path_buf = PathBuf::from(&item);
-        match history_hash.get_mut(&path_buf) {
-            Some(e) => e.cd_count += 1,
-            None => {
-                history_hash.insert(path_buf, DirInfo::new(1, true));
-                ()
+pub fn jump_then_add_to_hist(item: String, path: &str) {
+    if !item.is_empty() {
+        let tree = Db::open(path).unwrap();
+        print!("{}", &item);
+        let new_visited_dir = Dir::new_visited(PathBuf::from(&item));
+        let insertion = match tree.update_and_fetch(&item.as_bytes(), update) {
+            Ok(v) => {
+                if v == None {
+                    let res = tree.insert(
+                        &item.as_bytes(),
+                        serde_json::to_string(&new_visited_dir).unwrap().as_bytes(),
+                    );
+                    res
+                } else {
+                    Ok(v)
+                }
             }
+            Err(_v) => Err(_v),
+        };
+        insertion.expect("New item insertion failed!!");
+        tree.flush().expect("DB flush failed");
+    }
+}
+
+fn update(old: Option<&[u8]>) -> Option<Vec<u8>> {
+    match old {
+        Some(bytes) => {
+            let mut dir: Dir = serde_json::from_str(str::from_utf8(&bytes).unwrap()).unwrap();
+            dir.add_cd_count();
+            Some(serde_json::to_string(&dir).unwrap().as_bytes().to_vec())
         }
-        let mut history_dir: PathBuf = home_dir().unwrap();
-        history_dir.push(".config/jump-kun/history.log");
-        let mut h = BufWriter::new(File::create(history_dir).unwrap());
-        let b: &str = &serde_json::to_string(&history_hash).unwrap();
-        let _ = h.write(&b.as_bytes());
+        None => None,
     }
 }
