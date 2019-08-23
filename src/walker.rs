@@ -15,7 +15,7 @@ pub fn start_walking_around(from: Dir) -> DirVec {
 
         let child_dirs = WalkDir::new(&dir)
             .min_depth(1)
-            .max_depth(2)
+            .max_depth(3)
             .into_iter()
             .filter_entry(|e| !dir_check::is_git_dir(e) && dir_check::is_directory(e));
 
