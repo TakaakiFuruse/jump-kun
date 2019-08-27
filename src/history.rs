@@ -11,9 +11,10 @@ pub fn read(path: &str) -> DirVec {
         .filter_map(|elm| {
             let s: String = str::from_utf8(&elm.unwrap()).unwrap().to_owned();
             let dir: Dir = serde_json::from_str(&s).unwrap();
-            match dir.path.exists() {
-                true => Some(dir),
-                false => None,
+            if dir.path.exists() {
+                Some(dir)
+            } else {
+                None
             }
         })
         .collect();

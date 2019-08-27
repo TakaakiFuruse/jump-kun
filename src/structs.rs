@@ -50,7 +50,7 @@ impl Dir {
     }
 }
 
-#[derive(PartialEq, PartialOrd, Debug, Serialize, Deserialize, Clone)]
+#[derive(PartialEq, PartialOrd, Debug, Serialize, Deserialize, Clone, Default)]
 pub struct DirVec {
     pub map: Vec<Dir>,
 }
