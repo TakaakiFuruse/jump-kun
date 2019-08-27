@@ -1,20 +1,10 @@
-use jump_kun::history_to_hash::read_history;
+use jump_kun::history;
 use jump_kun::{dir_finder, select_item};
 extern crate skim;
-use jump_kun::dir_sorter;
+use dirs::home_dir;
 use jump_kun::jump_then_add_to_hist::jump_then_add_to_hist;
-use jump_kun::structs::DirInfo;
+use jump_kun::structs::{Dir, DirVec};
 use skim::SkimOptionsBuilder;
-use std::collections::HashMap;
-use std::path::PathBuf;
-
-// shell script
-// function jump-kun-jump(){
-//     local selected=$(jump-kun)
-//         if [[ -n $selected ]]; then
-//         \cd $selected
-//         fi
-// }
 
 pub fn main() {
     let options = SkimOptionsBuilder::default()
@@ -29,13 +19,16 @@ pub fn main() {
         .build()
         .unwrap();
 
-    let history_hash: HashMap<PathBuf, DirInfo> = read_history();
-    let mut found_dirs: HashMap<PathBuf, DirInfo> = dir_finder::find_dirs();
+    let mut default_db_path = home_dir().unwrap();
+    default_db_path.push(".config/jump-kun/history");
 
-    found_dirs.extend(history_hash.clone());
+    let history_dirs: DirVec = history::read(default_db_path.to_str().unwrap());
+    let mut found_dirs: DirVec = dir_finder::find_dirs();
+    let current_dir: Dir = dir_finder::current_dir();
 
-    let all_dir_in_string = dir_sorter::to_sorted_string(found_dirs, dir_finder::current_dir());
-
-    let item = select_item::select(all_dir_in_string, &options);
-    jump_then_add_to_hist(item, history_hash);
+    found_dirs.append(history_dirs);
+    found_dirs.push(current_dir);
+    found_dirs.sort();
+    let item = select_item::select(found_dirs.all_path_to_string(), &options);
+    jump_then_add_to_hist(item, default_db_path.to_str().unwrap());
 }
