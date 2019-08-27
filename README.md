@@ -33,7 +33,7 @@ jump-kun...
 ```cargo install --path .```
 
 
-## Add following script to your zsh.rc
+## Add following script to your .zshrc
 
 (Might work on fish or bash, but not sure...)
 
