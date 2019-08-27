@@ -9,7 +9,7 @@ pub fn read(path: &str) -> DirVec {
         .iter()
         .values()
         .filter_map(|elm| {
-            let s: String = str::from_utf8(&elm.unwrap()[0..]).unwrap().to_owned();
+            let s: String = str::from_utf8(&elm.unwrap()).unwrap().to_owned();
             let dir: Dir = serde_json::from_str(&s).unwrap();
             match dir.path.exists() {
                 true => Some(dir),

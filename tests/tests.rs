@@ -5,6 +5,7 @@ use jump_kun::walker::{start_walking_around, start_walking_down, start_walking_u
 use std::path::PathBuf;
 
 #[cfg(test)]
+#[allow(unused_must_use)]
 mod tests_for_history {
     use super::*;
     use dirs::home_dir;
@@ -18,6 +19,7 @@ mod tests_for_history {
         // Treeをスコープ内で殺さないとロックが外れない
         {
             let tree = Db::open("./tests/test_db").unwrap();
+            tree.clear();
             tree.insert(
                 home_dir().unwrap().to_str().unwrap().as_bytes(),
                 serde_json::to_string(&Dir::default()).unwrap().as_bytes(),
