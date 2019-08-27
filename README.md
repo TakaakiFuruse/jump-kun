@@ -13,9 +13,13 @@ everytime is cumbersome.
 
 Just use jump-kun.
 
-```
-TODO: ADD GIF ANIMES HERE...
-```
+![demo](./demo-gif.gif)
+
+jump-kun...
+
+- Automatically records dirs you visited and shows.
+- Lists parents and child dirs of current dirs
+
 
 (This crate is heavyly inspired by [b4b4r07's enhancd](https://github.com/b4b4r07/enhancd))
 
