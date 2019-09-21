@@ -3,6 +3,9 @@ name = "jump-kun-macros"
 version = "0.1.0"
 authors = ["TakaakiFuruse <takaakifuruse@gmail.com>"]
 edition = "2018"
+description = "A crate for jump-kun. Parses jump-kun config file and creates fucntions."
+license = "MIT"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
