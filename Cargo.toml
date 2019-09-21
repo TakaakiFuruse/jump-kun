@@ -3,6 +3,9 @@ name = "jump-kun"
 version = "0.2.0"
 authors = ["TakaakiFuruse <takaakifuruse@gmail.com>"]
 edition = "2018"
+description = "A simple directory jumper made by rust."
+repository = "https://github.com/TakaakiFuruse/jump-kun"
+license = "MIT"
 
 [[bin]]
 name = "jump-kun"
