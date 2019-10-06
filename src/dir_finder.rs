@@ -1,16 +1,17 @@
 use super::enums::DirType;
 use super::structs::{Dir, DirBuilder, DirVec};
 use super::walker::{start_walking_around, start_walking_down, start_walking_up};
+use ignore::gitignore::Gitignore;
 
 use std::env;
 use std::path::{Path, PathBuf};
 
-pub fn find_dirs() -> DirVec {
+pub fn find_dirs(jump_kun_ignore: Gitignore) -> DirVec {
     match env::var("DOWN_FROM") {
-        Ok(dir) => start_walking_down(from_specific_directory(dir)),
+        Ok(dir) => start_walking_down(from_specific_directory(dir), &jump_kun_ignore),
         Err(_) => match env::var("UP_FROM") {
-            Ok(dir) => start_walking_up(from_parent_directory_or_root(dir)),
-            Err(_) => start_walking_around(from_current_directory()),
+            Ok(dir) => start_walking_up(from_parent_directory_or_root(dir), &jump_kun_ignore),
+            Err(_) => start_walking_around(from_current_directory(), &jump_kun_ignore),
         },
     }
 }

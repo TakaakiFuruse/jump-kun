@@ -1,4 +1,5 @@
 use dirs::home_dir;
+use jump_kun::dir_check::create_jump_kun_ignore;
 use jump_kun::enums::DirType;
 use jump_kun::structs::DirBuilder;
 use jump_kun::walker::{start_walking_around, start_walking_down, start_walking_up};
@@ -47,7 +48,6 @@ mod tests_for_history {
         };
         assert_eq!(dirvec, result_vec);
     }
-
 }
 
 #[cfg(test)]
@@ -60,7 +60,7 @@ mod tests_for_walking {
             .path(home_dir().unwrap())
             .build()
             .unwrap();
-        let result = start_walking_down(dir);
+        let result = start_walking_down(dir, &create_jump_kun_ignore());
         assert_eq!(result.map.len() > 1, true);
         for dir in result.map {
             assert_eq!(dir.cd_count, 0);
@@ -74,7 +74,7 @@ mod tests_for_walking {
             .path(home_dir().unwrap())
             .build()
             .unwrap();
-        let result = start_walking_up(dir);
+        let result = start_walking_up(dir, &create_jump_kun_ignore());
         assert_eq!(result.map.len() > 1, true);
         for dir in result.map {
             assert_eq!(dir.cd_count, 0);
@@ -88,7 +88,7 @@ mod tests_for_walking {
             .path(home_dir().unwrap())
             .build()
             .unwrap();
-        let result = start_walking_around(dir);
+        let result = start_walking_around(dir, &create_jump_kun_ignore());
         assert_eq!(result.map.len() > 1, true);
         for dir in result.map {
             assert_eq!(dir.cd_count, 0);
@@ -101,7 +101,7 @@ mod tests_for_walking {
             .path(PathBuf::from(r"\this\doesnt\exists"))
             .build()
             .unwrap();
-        let result_hash = start_walking_around(dir);
+        let result_hash = start_walking_around(dir, &create_jump_kun_ignore());
         assert_eq!(result_hash.map.len(), 0);
     }
     #[test]
@@ -110,7 +110,7 @@ mod tests_for_walking {
             .path(PathBuf::from(r"\this\doesnt\exists"))
             .build()
             .unwrap();
-        let result_hash = start_walking_down(dir);
+        let result_hash = start_walking_down(dir, &create_jump_kun_ignore());
         assert_eq!(result_hash.map.len(), 0);
     }
     #[test]
@@ -119,7 +119,7 @@ mod tests_for_walking {
             .path(PathBuf::from(r"\this\doesnt\exists"))
             .build()
             .unwrap();
-        let result_hash = start_walking_up(dir);
+        let result_hash = start_walking_up(dir, &create_jump_kun_ignore());
         assert_eq!(result_hash.map.len(), 0);
     }
 }
