@@ -1,5 +1,5 @@
 use jump_kun::history;
-use jump_kun::{dir_finder, select_item};
+use jump_kun::{dir_check, dir_finder, select_item};
 extern crate skim;
 use dirs::home_dir;
 use jump_kun::jump_then_add_to_hist::jump_then_add_to_hist;
@@ -22,8 +22,10 @@ pub fn main() {
     let mut default_db_path = home_dir().unwrap();
     default_db_path.push(".config/jump-kun/history");
 
+    let jump_kun_ignore = dir_check::create_jump_kun_ignore();
+
     let history_dirs: DirVec = history::read(default_db_path.to_str().unwrap());
-    let mut found_dirs: DirVec = dir_finder::find_dirs();
+    let mut found_dirs: DirVec = dir_finder::find_dirs(jump_kun_ignore);
     let current_dir: Dir = dir_finder::current_dir();
 
     found_dirs.append(history_dirs);
