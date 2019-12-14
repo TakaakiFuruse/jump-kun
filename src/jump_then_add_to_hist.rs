@@ -7,6 +7,7 @@ use std::str;
 pub fn jump_then_add_to_hist(item: String, path: &str) {
     if !item.is_empty() {
         let tree = Db::open(path).unwrap();
+        print!("{}", &item);
         let new_visited_dir = Dir::new_visited(PathBuf::from(&item));
         let insertion = match tree.update_and_fetch(&item.as_bytes(), update) {
             Ok(v) => match v {

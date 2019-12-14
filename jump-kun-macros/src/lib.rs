@@ -48,7 +48,13 @@ pub fn order_builder(item: TokenStream) -> TokenStream {
 
     let orders: Vec<&str> = order_config.split(",").collect();
 
-    assert_eq!(&orders.len(), enum_len);
+    assert_eq!(
+        &orders.len(),
+        enum_len,
+        "orders: {:#?}, enum_variants: {:#?}",
+        orders,
+        enum_variants
+    );
 
     let enum_fields = orders.iter().enumerate().map(|(i, elm)| {
         let elm_ident = syn::Ident::new(&elm, name.span());

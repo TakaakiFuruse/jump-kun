@@ -12,7 +12,7 @@ name = "jump-kun"
 path = "src/main.rs"
 
 [dependencies]
-jump-kun-macros={version = "0.1.0", path = "jump-kun-macros"}
+jump-kun-macros={version = "0.1.1", path = "jump-kun-macros"}
 walkdir= "2.2.9"
 skim = "0.6.9"
 serde_json= "1.0.44"
