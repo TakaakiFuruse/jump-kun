@@ -128,7 +128,6 @@ mod tests_for_dir {
         let dir = Dir::new(path, 0, DirType::VisitedDir);
         assert_eq!(dir_vec.map[0], dir);
     }
-
 }
 
 #[cfg(test)]
