@@ -47,3 +47,11 @@ function jump-kun-jump(){
 ```
 
 Then type ``` jump-kun-jump ``` on your terminal.
+
+## WindowsOS
+
+Sorry Windows users. jump-kun is not supported on WindowsOS.  
+jump-kun uses skim as a user interface and skim is dependent on tuikit.  
+
+Since tuikit is not supported on Windows, I can't guarantee that my library works on Windows.  
+[Issue](https://github.com/TakaakiFuruse/jump-kun/issues/18)
