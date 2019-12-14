@@ -1,13 +1,11 @@
 use super::enums::DirType;
-use derive_builder::Builder;
 use dirs::home_dir;
 use serde::{Deserialize, Serialize};
 use std::iter::FromIterator;
 use std::iter::IntoIterator;
 use std::path::PathBuf;
 
-#[derive(Builder, PartialEq, Debug, Serialize, Deserialize, Clone, PartialOrd)]
-#[builder(default)]
+#[derive(PartialEq, Debug, Serialize, Deserialize, Clone, PartialOrd)]
 pub struct Dir {
     pub path: PathBuf,
     pub cd_count: u32,
@@ -25,11 +23,21 @@ impl Default for Dir {
 }
 
 impl Dir {
+    pub fn path(mut self, path: PathBuf) -> Self {
+        self.path = path;
+        self
+    }
+
+    pub fn dirtype(mut self, dir_type: DirType) -> Self {
+        self.dirtype = dir_type;
+        self
+    }
+
     pub fn new(path: PathBuf, cd_count: u32, dirtype: DirType) -> Dir {
         Dir {
-            path: path,
-            cd_count: cd_count,
-            dirtype: dirtype,
+            path,
+            cd_count,
+            dirtype,
         }
     }
 
@@ -81,7 +89,14 @@ impl DirVec {
         let str: String = self
             .map
             .iter()
-            .map(|elm| format!("{}\n", elm.path.to_str().unwrap()))
+            .map(|elm| {
+                format!(
+                    "{}\n",
+                    elm.path
+                        .to_str()
+                        .unwrap_or("DirVec::all_path_to_string error")
+                )
+            })
             .collect();
         str
     }

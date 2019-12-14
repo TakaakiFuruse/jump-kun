@@ -25,8 +25,8 @@ pub fn main() {
     let jump_kun_ignore = dir_check::create_jump_kun_ignore();
 
     let history_dirs: DirVec = history::read(default_db_path.to_str().unwrap());
-    let mut found_dirs: DirVec = dir_finder::find_dirs(jump_kun_ignore);
-    let current_dir: Dir = dir_finder::current_dir();
+    let mut found_dirs: DirVec = dir_finder::find_dirs(jump_kun_ignore).unwrap();
+    let current_dir: Dir = dir_finder::current_dir().unwrap();
 
     found_dirs.append(history_dirs);
     found_dirs.push(current_dir);

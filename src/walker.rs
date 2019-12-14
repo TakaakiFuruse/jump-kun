@@ -1,10 +1,11 @@
 use super::dir_check;
 use super::enums::DirType;
-use super::structs::{Dir, DirBuilder, DirVec};
+use super::structs::{Dir, DirVec};
+use anyhow::Result;
 use ignore::gitignore::Gitignore;
 use walkdir::WalkDir;
 
-pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> DirVec {
+pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirVec> {
     let mut dirs = DirVec::new();
 
     for dir in from.path.ancestors() {
@@ -23,30 +24,26 @@ pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> DirVec {
         for entry in parent_dirs {
             if entry.is_ok() {
                 dirs.push(
-                    DirBuilder::default()
-                        .path(entry.unwrap().into_path())
-                        .dirtype(DirType::ParentDir)
-                        .build()
-                        .unwrap(),
+                    Dir::default()
+                        .path(entry?.into_path())
+                        .dirtype(DirType::ParentDir),
                 );
             }
         }
         for entry in child_dirs {
             if entry.is_ok() {
                 dirs.push(
-                    DirBuilder::default()
-                        .path(entry.unwrap().into_path())
-                        .dirtype(DirType::ChildDir)
-                        .build()
-                        .unwrap(),
+                    Dir::default()
+                        .path(entry?.into_path())
+                        .dirtype(DirType::ChildDir),
                 );
             }
         }
     }
-    dirs
+    Ok(dirs)
 }
 
-pub fn start_walking_down(from: Dir, jump_kun_ignore: &Gitignore) -> DirVec {
+pub fn start_walking_down(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirVec> {
     let mut dirs = DirVec::new();
 
     let child_dirs = WalkDir::new(from.path)
@@ -58,18 +55,16 @@ pub fn start_walking_down(from: Dir, jump_kun_ignore: &Gitignore) -> DirVec {
     for entry in child_dirs {
         if entry.is_ok() {
             dirs.push(
-                DirBuilder::default()
-                    .path(entry.unwrap().into_path())
-                    .dirtype(DirType::ChildDir)
-                    .build()
-                    .unwrap(),
+                Dir::default()
+                    .path(entry?.into_path())
+                    .dirtype(DirType::ChildDir),
             );
         }
     }
-    dirs
+    Ok(dirs)
 }
 
-pub fn start_walking_up(from: Dir, jump_kun_ignore: &Gitignore) -> DirVec {
+pub fn start_walking_up(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirVec> {
     let mut dirs = DirVec::new();
 
     for dir in from.path.ancestors() {
@@ -82,14 +77,12 @@ pub fn start_walking_up(from: Dir, jump_kun_ignore: &Gitignore) -> DirVec {
         for entry in parent_dirs {
             if entry.is_ok() {
                 dirs.push(
-                    DirBuilder::default()
-                        .path(entry.unwrap().into_path())
-                        .dirtype(DirType::ParentDir)
-                        .build()
-                        .unwrap(),
+                    Dir::default()
+                        .path(entry?.into_path())
+                        .dirtype(DirType::ParentDir),
                 );
             }
         }
     }
-    dirs
+    Ok(dirs)
 }
