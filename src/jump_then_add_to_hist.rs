@@ -7,13 +7,14 @@ use std::str;
 pub fn jump_then_add_to_hist(item: String, path: &str) {
     if !item.is_empty() {
         let tree = Db::open(path).unwrap();
-        print!("{}", &item);
         let new_visited_dir = Dir::new_visited(PathBuf::from(&item));
         let insertion = match tree.update_and_fetch(&item.as_bytes(), update) {
             Ok(v) => match v {
                 None => tree.insert(
                     &item.as_bytes(),
-                    serde_json::to_string(&new_visited_dir).unwrap().as_bytes(),
+                    serde_json::to_string(&new_visited_dir)
+                        .unwrap_or("serde_json to_string error".to_string())
+                        .as_bytes(),
                 ),
                 _ => Ok(v),
             },
@@ -29,7 +30,12 @@ fn update(old: Option<&[u8]>) -> Option<Vec<u8>> {
         Some(bytes) => {
             let mut dir: Dir = serde_json::from_str(str::from_utf8(&bytes).unwrap()).unwrap();
             dir.add_cd_count();
-            Some(serde_json::to_string(&dir).unwrap().as_bytes().to_vec())
+            Some(
+                serde_json::to_string(&dir)
+                    .unwrap_or("serde_json::to_string error".to_string())
+                    .as_bytes()
+                    .to_vec(),
+            )
         }
         None => None,
     }
@@ -88,5 +94,4 @@ mod test_for_jump_then_add_to_hist {
             assert_eq!(dir.cd_count, 2);
         }
     }
-
 }

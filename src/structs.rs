@@ -1,13 +1,11 @@
 use super::enums::DirType;
-use derive_builder::Builder;
 use dirs::home_dir;
 use serde::{Deserialize, Serialize};
 use std::iter::FromIterator;
 use std::iter::IntoIterator;
 use std::path::PathBuf;
 
-#[derive(Builder, PartialEq, Debug, Serialize, Deserialize, Clone, PartialOrd)]
-#[builder(default)]
+#[derive(PartialEq, Debug, Serialize, Deserialize, Clone, PartialOrd)]
 pub struct Dir {
     pub path: PathBuf,
     pub cd_count: u32,
@@ -25,11 +23,29 @@ impl Default for Dir {
 }
 
 impl Dir {
+    pub fn invalid() -> Self {
+        Self {
+            path: PathBuf::from(""),
+            cd_count: 0,
+            dirtype: DirType::Invalid,
+        }
+    }
+
+    pub fn path(mut self, path: PathBuf) -> Self {
+        self.path = path;
+        self
+    }
+
+    pub fn dirtype(mut self, dir_type: DirType) -> Self {
+        self.dirtype = dir_type;
+        self
+    }
+
     pub fn new(path: PathBuf, cd_count: u32, dirtype: DirType) -> Dir {
         Dir {
-            path: path,
-            cd_count: cd_count,
-            dirtype: dirtype,
+            path,
+            cd_count,
+            dirtype,
         }
     }
 
@@ -78,12 +94,19 @@ impl DirVec {
     }
 
     pub fn all_path_to_string(&self) -> String {
-        let str: String = self
+        let s: String = self
             .map
             .iter()
-            .map(|elm| format!("{}\n", elm.path.to_str().unwrap()))
+            .map(|elm| {
+                format!(
+                    "{}\n",
+                    elm.path
+                        .to_str()
+                        .unwrap_or("DirVec::all_path_to_string error")
+                )
+            })
             .collect();
-        str
+        s
     }
 
     pub fn sort(&mut self) {
@@ -128,7 +151,6 @@ mod tests_for_dir {
         let dir = Dir::new(path, 0, DirType::VisitedDir);
         assert_eq!(dir_vec.map[0], dir);
     }
-
 }
 
 #[cfg(test)]

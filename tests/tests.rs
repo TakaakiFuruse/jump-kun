@@ -1,7 +1,7 @@
 use dirs::home_dir;
 use jump_kun::dir_check::create_jump_kun_ignore;
 use jump_kun::enums::DirType;
-use jump_kun::structs::DirBuilder;
+use jump_kun::structs::{Dir, DirVec};
 use jump_kun::walker::{start_walking_around, start_walking_down, start_walking_up};
 use std::path::PathBuf;
 
@@ -11,7 +11,6 @@ mod tests_for_history {
     use super::*;
     use dirs::home_dir;
     use jump_kun::history::read;
-    use jump_kun::structs::{Dir, DirBuilder, DirVec};
     use serde_json;
     use sled::Db;
 
@@ -30,11 +29,9 @@ mod tests_for_history {
             tree.insert(
                 "/not/exists/dir".as_bytes(),
                 serde_json::to_string(
-                    &DirBuilder::default()
+                    &Dir::default()
                         .path(PathBuf::from("/not/exists/dir"))
-                        .dirtype(DirType::NotSure)
-                        .build()
-                        .unwrap(),
+                        .dirtype(DirType::NotSure),
                 )
                 .unwrap()
                 .as_bytes(),
@@ -42,11 +39,11 @@ mod tests_for_history {
             .expect("could not insert test data");
             tree.flush().expect("flush faild");
         }
-        let dirvec = read("./tests/test_db");
+        let dirvec = read(&PathBuf::from("./tests/test_db"));
         let result_vec = DirVec {
             map: vec![Dir::default()],
         };
-        assert_eq!(dirvec, result_vec);
+        assert_eq!(dirvec.unwrap(), result_vec);
     }
 }
 
@@ -56,11 +53,8 @@ mod tests_for_walking {
 
     #[test]
     fn start_walking_down_returns_dirvec() {
-        let dir = DirBuilder::default()
-            .path(home_dir().unwrap())
-            .build()
-            .unwrap();
-        let result = start_walking_down(dir, &create_jump_kun_ignore());
+        let dir = Dir::default().path(home_dir().unwrap());
+        let result = start_walking_down(dir, &create_jump_kun_ignore()).unwrap();
         assert_eq!(result.map.len() > 1, true);
         for dir in result.map {
             assert_eq!(dir.cd_count, 0);
@@ -70,11 +64,8 @@ mod tests_for_walking {
 
     #[test]
     fn start_walking_up_returns_dirvec() {
-        let dir = DirBuilder::default()
-            .path(home_dir().unwrap())
-            .build()
-            .unwrap();
-        let result = start_walking_up(dir, &create_jump_kun_ignore());
+        let dir = Dir::default().path(home_dir().unwrap());
+        let result = start_walking_up(dir, &create_jump_kun_ignore()).unwrap();
         assert_eq!(result.map.len() > 1, true);
         for dir in result.map {
             assert_eq!(dir.cd_count, 0);
@@ -84,11 +75,8 @@ mod tests_for_walking {
 
     #[test]
     fn start_walking_around_returns_dirvec() {
-        let dir = DirBuilder::default()
-            .path(home_dir().unwrap())
-            .build()
-            .unwrap();
-        let result = start_walking_around(dir, &create_jump_kun_ignore());
+        let dir = Dir::default().path(home_dir().unwrap());
+        let result = start_walking_around(dir, &create_jump_kun_ignore()).unwrap();
         assert_eq!(result.map.len() > 1, true);
         for dir in result.map {
             assert_eq!(dir.cd_count, 0);
@@ -97,29 +85,20 @@ mod tests_for_walking {
 
     #[test]
     fn start_walking_around_return_empty_dirvec_if_dir_not_exist() {
-        let dir = DirBuilder::default()
-            .path(PathBuf::from(r"\this\doesnt\exists"))
-            .build()
-            .unwrap();
-        let result_hash = start_walking_around(dir, &create_jump_kun_ignore());
+        let dir = Dir::default().path(PathBuf::from(r"\this\doesnt\exists"));
+        let result_hash = start_walking_around(dir, &create_jump_kun_ignore()).unwrap();
         assert_eq!(result_hash.map.len(), 0);
     }
     #[test]
     fn start_walking_down_return_empty_dirvec_if_dir_not_exist() {
-        let dir = DirBuilder::default()
-            .path(PathBuf::from(r"\this\doesnt\exists"))
-            .build()
-            .unwrap();
-        let result_hash = start_walking_down(dir, &create_jump_kun_ignore());
+        let dir = Dir::default().path(PathBuf::from(r"\this\doesnt\exists"));
+        let result_hash = start_walking_down(dir, &create_jump_kun_ignore()).unwrap();
         assert_eq!(result_hash.map.len(), 0);
     }
     #[test]
     fn start_walking_up_return_empty_dirvec_if_dir_not_exist() {
-        let dir = DirBuilder::default()
-            .path(PathBuf::from(r"\this\doesnt\exists"))
-            .build()
-            .unwrap();
-        let result_hash = start_walking_up(dir, &create_jump_kun_ignore());
+        let dir = Dir::default().path(PathBuf::from(r"\this\doesnt\exists"));
+        let result_hash = start_walking_up(dir, &create_jump_kun_ignore()).unwrap();
         assert_eq!(result_hash.map.len(), 0);
     }
 }
