@@ -43,7 +43,7 @@ pub fn order_builder(item: TokenStream) -> TokenStream {
             .as_str()
             .unwrap()
             .to_owned(),
-        Err(_) => "CurrentDir,VisitedDir,ParentDir,ChildDir,NotSure".to_string(),
+        Err(_) => "CurrentDir,VisitedDir,ParentDir,ChildDir,NotSure,Invalid".to_string(),
     };
 
     let orders: Vec<&str> = order_config.split(",").collect();

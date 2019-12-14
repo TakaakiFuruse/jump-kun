@@ -8,6 +8,7 @@ pub enum DirType {
     ChildDir,
     VisitedDir,
     NotSure,
+    Invalid,
 }
 
 #[cfg(test)]

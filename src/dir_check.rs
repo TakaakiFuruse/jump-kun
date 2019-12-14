@@ -12,7 +12,9 @@ pub fn create_ignore_if_not_found() -> File {
     path.push(".config/jump-kun/.jump_kun_ignore");
     match File::open(&path) {
         Ok(e) => e,
-        Err(_e) => File::create(&path).unwrap(),
+        Err(_e) => {
+            File::create(&path).unwrap_or_else(|_| panic!("could not create .jump_kun_ignore file"))
+        }
     }
 }
 pub fn create_jump_kun_ignore() -> Gitignore {
@@ -21,7 +23,9 @@ pub fn create_jump_kun_ignore() -> Gitignore {
     home_path.push(".config/jump-kun/.jump_kun_ignore");
     let mut builder = GitignoreBuilder::new(home_dir().unwrap());
     builder.add(home_path);
-    builder.build().unwrap()
+    builder
+        .build()
+        .unwrap_or_else(|_| panic!("could not create .jump_kun_ignore file"))
 }
 
 pub fn must_be_included(entry: &DirEntry, jump_kun_ignore: &Gitignore) -> bool {

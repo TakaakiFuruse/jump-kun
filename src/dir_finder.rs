@@ -24,7 +24,7 @@ fn from_specific_directory(dir: String) -> Result<Dir> {
 
 fn from_current_directory() -> Result<Dir> {
     Ok(Dir::default()
-        .path(env::current_dir().unwrap())
+        .path(env::current_dir()?)
         .dirtype(DirType::CurrentDir))
 }
 
@@ -43,7 +43,10 @@ pub fn current_dir() -> Result<Dir> {
     let pathbuf = match env::var("DOWN_FROM") {
         Ok(dir) => PathBuf::from(dir),
         Err(_) => match env::var("UP_FROM") {
-            Ok(dir) => PathBuf::from(dir).parent().unwrap().to_path_buf(),
+            Ok(dir) => PathBuf::from(dir)
+                .parent()
+                .unwrap_or_else(|| Path::new("/"))
+                .to_path_buf(),
             Err(_) => env::current_dir()?,
         },
     };

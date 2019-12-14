@@ -39,11 +39,11 @@ mod tests_for_history {
             .expect("could not insert test data");
             tree.flush().expect("flush faild");
         }
-        let dirvec = read("./tests/test_db");
+        let dirvec = read(&PathBuf::from("./tests/test_db"));
         let result_vec = DirVec {
             map: vec![Dir::default()],
         };
-        assert_eq!(dirvec, result_vec);
+        assert_eq!(dirvec.unwrap(), result_vec);
     }
 }
 

@@ -23,6 +23,14 @@ impl Default for Dir {
 }
 
 impl Dir {
+    pub fn invalid() -> Self {
+        Self {
+            path: PathBuf::from(""),
+            cd_count: 0,
+            dirtype: DirType::Invalid,
+        }
+    }
+
     pub fn path(mut self, path: PathBuf) -> Self {
         self.path = path;
         self
@@ -86,7 +94,7 @@ impl DirVec {
     }
 
     pub fn all_path_to_string(&self) -> String {
-        let str: String = self
+        let s: String = self
             .map
             .iter()
             .map(|elm| {
@@ -98,7 +106,7 @@ impl DirVec {
                 )
             })
             .collect();
-        str
+        s
     }
 
     pub fn sort(&mut self) {
