@@ -1,6 +1,6 @@
 [package]
 name = "jump-kun"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["TakaakiFuruse <takaakifuruse@gmail.com>"]
 edition = "2018"
 description = "A simple directory jumper made by rust."
