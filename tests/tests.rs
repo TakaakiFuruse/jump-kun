@@ -12,13 +12,12 @@ mod tests_for_history {
     use dirs::home_dir;
     use jump_kun::history::read;
     use serde_json;
-    use sled::Db;
 
     #[test]
     fn read_returns_dirvec_with_existing_dirs() {
         // Treeをスコープ内で殺さないとロックが外れない
         {
-            let tree = Db::open("./tests/test_db").unwrap();
+            let tree = sled::open("./tests/test_db").unwrap();
             tree.clear();
             tree.insert(
                 home_dir().unwrap().to_str().unwrap().as_bytes(),

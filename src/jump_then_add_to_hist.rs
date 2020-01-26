@@ -1,12 +1,11 @@
 use super::structs::Dir;
 use serde_json;
-use sled::Db;
 use std::path::PathBuf;
 use std::str;
 
 pub fn jump_then_add_to_hist(item: String, path: &str) {
     if !item.is_empty() {
-        let tree = Db::open(path).unwrap();
+        let tree = sled::open(path).unwrap();
         print!("{}", &item);
         let new_visited_dir = Dir::new_visited(PathBuf::from(&item));
         let insertion = match tree.update_and_fetch(&item.as_bytes(), update) {
@@ -51,7 +50,7 @@ mod test_for_jump_then_add_to_hist {
     fn create_a_new_dir_entry_and_correctly_increases_cd_count() {
         let path_str = "./tests/test_db";
         {
-            let tree = Db::open(&path_str).unwrap();
+            let tree = sled::open(&path_str).unwrap();
             tree.clear();
         }
 
@@ -62,7 +61,7 @@ mod test_for_jump_then_add_to_hist {
 
         // creates entry with cd_count 1
         {
-            let tree = Db::open(&path_str).unwrap();
+            let tree = sled::open(&path_str).unwrap();
 
             let item = "/first/visit/dir";
             assert_eq!(tree.get(&item).is_ok(), true);
@@ -82,7 +81,7 @@ mod test_for_jump_then_add_to_hist {
 
         // cd_count will be 2
         {
-            let tree = Db::open(&path_str).unwrap();
+            let tree = sled::open(&path_str).unwrap();
 
             let item = "/first/visit/dir";
             assert_eq!(tree.get(&item).is_ok(), true);

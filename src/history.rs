@@ -2,12 +2,11 @@ use super::structs::{Dir, DirVec};
 use crate::enums::DirType;
 use anyhow::Result;
 use serde_json;
-use sled::Db;
 use std::path::PathBuf;
 use std::str;
 
 pub fn read(path: &PathBuf) -> Result<DirVec> {
-    let tree = Db::open(path)?;
+    let tree = sled::open(path)?;
     let dirvec: DirVec = tree
         .iter()
         .filter_map(|k| match k {
