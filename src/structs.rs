@@ -93,7 +93,7 @@ impl DirVec {
         self.map.append(&mut v.map)
     }
 
-    pub fn all_path_to_string(&self) -> String {
+    pub fn all_path_to_str(&self) -> String {
         let s: String = self
             .map
             .iter()
@@ -162,7 +162,7 @@ mod tests_for_dirvec {
         let mut dirvec = DirVec::new();
         dirvec.push(Dir::new(PathBuf::from("/a/dir/1"), 0, DirType::VisitedDir));
         dirvec.push(Dir::new(PathBuf::from("/a/dir/2"), 0, DirType::VisitedDir));
-        assert_eq!(dirvec.all_path_to_string(), "/a/dir/1\n/a/dir/2\n");
+        assert_eq!(dirvec.all_path_to_str(), "/a/dir/1\n/a/dir/2\n");
     }
 
     #[test]

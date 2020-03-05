@@ -8,15 +8,15 @@ use std::path::{Path, PathBuf};
 
 pub fn find_dirs(jump_kun_ignore: Gitignore) -> Result<DirVec> {
     match env::var("DOWN_FROM") {
-        Ok(dir) => start_walking_down(from_specific_directory(dir)?, &jump_kun_ignore),
+        Ok(dir) => start_walking_down(from_specific_directory(&dir)?, &jump_kun_ignore),
         Err(_) => match env::var("UP_FROM") {
-            Ok(dir) => start_walking_up(from_parent_directory_or_root(dir)?, &jump_kun_ignore),
+            Ok(dir) => start_walking_up(from_parent_directory_or_root(&dir)?, &jump_kun_ignore),
             Err(_) => start_walking_around(from_current_directory()?, &jump_kun_ignore),
         },
     }
 }
 
-fn from_specific_directory(dir: String) -> Result<Dir> {
+fn from_specific_directory(dir: &str) -> Result<Dir> {
     Ok(Dir::default()
         .path(PathBuf::from(dir))
         .dirtype(DirType::CurrentDir))
@@ -28,7 +28,7 @@ fn from_current_directory() -> Result<Dir> {
         .dirtype(DirType::CurrentDir))
 }
 
-fn from_parent_directory_or_root(dir: String) -> Result<Dir> {
+fn from_parent_directory_or_root(dir: &str) -> Result<Dir> {
     Ok(Dir::default()
         .path(
             PathBuf::from(dir)

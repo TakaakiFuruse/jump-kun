@@ -11,7 +11,7 @@ pub fn read(path: &PathBuf) -> Result<DirVec> {
         .iter()
         .filter_map(|k| match k {
             Ok((k, v)) => {
-                if PathBuf::from(str::from_utf8(&k).unwrap_or("str from error")).exists() {
+                if PathBuf::from(&str::from_utf8(&k).unwrap_or("str from error")).exists() {
                     let d: Dir =
                         serde_json::from_str(&str::from_utf8(&v).unwrap_or("str from error"))
                             .unwrap_or(Dir::invalid());

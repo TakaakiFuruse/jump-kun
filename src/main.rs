@@ -23,7 +23,7 @@ fn runner(options: SkimOptions) -> Result<()> {
     found_dirs.append(history_dirs);
     found_dirs.push(current_dir);
     found_dirs.sort();
-    let item = select_item::select(found_dirs.all_path_to_string(), &options);
+    let item = select_item::select(found_dirs.all_path_to_str(), &options);
     jump_then_add_to_hist(item, default_db_path.to_str().unwrap_or(""));
     Ok(())
 }
