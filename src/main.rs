@@ -5,7 +5,8 @@ use anyhow::Result;
 use dirs::home_dir;
 use jump_kun::jump_then_add_to_hist::jump_then_add_to_hist;
 use jump_kun::structs::{Dir, DirVec};
-use skim::{SkimOptions, SkimOptionsBuilder};
+use skim::SkimOptions;
+use skim::prelude::SkimOptionsBuilder;
 
 fn runner(options: SkimOptions) -> Result<()> {
     let mut default_db_path = match home_dir() {
