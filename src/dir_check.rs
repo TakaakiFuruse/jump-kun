@@ -1,11 +1,7 @@
 use dirs::home_dir;
 use ignore::gitignore::{Gitignore, GitignoreBuilder};
 use std::fs::File;
-use walkdir::DirEntry;
-
-fn is_directory(entry: &DirEntry) -> bool {
-    entry.path().is_dir()
-}
+use std::path::PathBuf;
 
 pub fn create_ignore_if_not_found() -> File {
     let mut path = home_dir().unwrap();
@@ -28,9 +24,9 @@ pub fn create_jump_kun_ignore() -> Gitignore {
         .unwrap_or_else(|_| panic!("could not create .jump_kun_ignore file"))
 }
 
-pub fn must_be_included(entry: &DirEntry, jump_kun_ignore: &Gitignore) -> bool {
-    if is_directory(entry) {
-        jump_kun_ignore.matched(entry.path(), true).is_none()
+pub fn must_be_included(entry: &PathBuf, jump_kun_ignore: &Gitignore) -> bool {
+    if entry.is_dir() {
+        jump_kun_ignore.matched(entry, true).is_none()
     } else {
         false
     }
