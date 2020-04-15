@@ -3,7 +3,7 @@ use super::enums::DirType;
 use super::structs::{Dir, DirVec};
 use anyhow::Result;
 use ignore::gitignore::Gitignore;
-use walkdir::WalkDir;
+use jwalk::WalkDir;
 
 pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirVec> {
     let mut dirs = DirVec::new();
@@ -13,19 +13,25 @@ pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> Result<Di
             .min_depth(0)
             .max_depth(0)
             .into_iter()
-            .filter_entry(|e| dir_check::must_be_included(e, jump_kun_ignore));
+            .filter(|e| match &e.as_ref() {
+                Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
+                Err(_) => false,
+            });
 
         let child_dirs = WalkDir::new(&dir)
             .min_depth(1)
             .max_depth(4)
             .into_iter()
-            .filter_entry(|e| dir_check::must_be_included(e, jump_kun_ignore));
+            .filter(|e| match &e.as_ref() {
+                Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
+                Err(_) => false,
+            });
 
         for entry in parent_dirs {
             if entry.is_ok() {
                 dirs.push(
                     Dir::default()
-                        .path(entry?.into_path())
+                        .path(entry?.path())
                         .dirtype(DirType::ParentDir),
                 );
             }
@@ -34,7 +40,7 @@ pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> Result<Di
             if entry.is_ok() {
                 dirs.push(
                     Dir::default()
-                        .path(entry?.into_path())
+                        .path(entry?.path())
                         .dirtype(DirType::ChildDir),
                 );
             }
@@ -50,13 +56,16 @@ pub fn start_walking_down(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirV
         .min_depth(1)
         .max_depth(2)
         .into_iter()
-        .filter_entry(|e| dir_check::must_be_included(e, jump_kun_ignore));
+        .filter(|e| match &e.as_ref() {
+            Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
+            Err(_) => false,
+        });
 
     for entry in child_dirs {
         if entry.is_ok() {
             dirs.push(
                 Dir::default()
-                    .path(entry?.into_path())
+                    .path(entry?.path())
                     .dirtype(DirType::ChildDir),
             );
         }
@@ -72,13 +81,16 @@ pub fn start_walking_up(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirVec
             .min_depth(0)
             .max_depth(0)
             .into_iter()
-            .filter_entry(|e| dir_check::must_be_included(e, jump_kun_ignore));
+            .filter(|e| match &e.as_ref() {
+                Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
+                Err(_) => false,
+            });
 
         for entry in parent_dirs {
             if entry.is_ok() {
                 dirs.push(
                     Dir::default()
-                        .path(entry?.into_path())
+                        .path(entry?.path())
                         .dirtype(DirType::ParentDir),
                 );
             }
