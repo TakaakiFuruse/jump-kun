@@ -14,7 +14,7 @@ pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> Result<Di
             .max_depth(0)
             .into_iter()
             .filter(|e| match &e.as_ref() {
-                Ok(ee) => dir_check::must_be_included(&ee.path(), jump_kun_ignore),
+                Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
                 Err(_) => false,
             });
 
@@ -23,7 +23,7 @@ pub fn start_walking_around(from: Dir, jump_kun_ignore: &Gitignore) -> Result<Di
             .max_depth(4)
             .into_iter()
             .filter(|e| match &e.as_ref() {
-                Ok(ee) => dir_check::must_be_included(&ee.path(), jump_kun_ignore),
+                Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
                 Err(_) => false,
             });
 
@@ -57,7 +57,7 @@ pub fn start_walking_down(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirV
         .max_depth(2)
         .into_iter()
         .filter(|e| match &e.as_ref() {
-            Ok(ee) => dir_check::must_be_included(&ee.path(), jump_kun_ignore),
+            Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
             Err(_) => false,
         });
 
@@ -82,7 +82,7 @@ pub fn start_walking_up(from: Dir, jump_kun_ignore: &Gitignore) -> Result<DirVec
             .max_depth(0)
             .into_iter()
             .filter(|e| match &e.as_ref() {
-                Ok(ee) => dir_check::must_be_included(&ee.path(), jump_kun_ignore),
+                Ok(ee) => dir_check::must_be_included(&ee, jump_kun_ignore),
                 Err(_) => false,
             });
 
