@@ -14,10 +14,10 @@ path = "src/main.rs"
 [dependencies]
 jump-kun-macros={version = "0.1.1", path = "jump-kun-macros"}
 jwalk= "0.5.1"
-skim = "0.8.1"
-serde_json= "1.0.51"
-serde = { version = "1.0.106", features = ["derive"] }
-dirs = "2.0.2"
-sled = "0.31.0"
-ignore = "0.4.14"
-anyhow = "1.0.28"
+skim = "0.8.2"
+serde_json= "1.0.55"
+serde = { version = "1.0.114", features = ["derive"] }
+dirs = "3.0.0"
+sled = "0.32.0"
+ignore = "0.4.16"
+anyhow = "1.0.31"
