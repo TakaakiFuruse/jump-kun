@@ -37,8 +37,6 @@ pub fn main() {
         ])
         .layout("reverse")
         .multi(false)
-        .preview(Some("ls {}"))
-        .preview_window(Some("right:30%:wrap"))
         .build()
         .unwrap();
     match runner(options) {
