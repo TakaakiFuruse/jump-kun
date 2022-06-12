@@ -110,7 +110,7 @@ impl DirVec {
     }
 
     pub fn sort(&mut self) {
-        &self.map.sort_by(|a, b| {
+        let _ = &self.map.sort_by(|a, b| {
             a.dirtype
                 .order()
                 .cmp(&b.dirtype.order())
