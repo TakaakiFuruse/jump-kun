@@ -1,6 +1,6 @@
 [package]
 name = "jump-kun-macros"
-version = "0.1.13"
+version = "0.1.14"
 authors = ["TakaakiFuruse <takaakifuruse@gmail.com>"]
 edition = "2018"
 description = "A crate for jump-kun. Parses jump-kun config file and creates fucntions."
@@ -13,8 +13,8 @@ license = "MIT"
 proc-macro = true
 
 [dependencies]
-syn = { version = "1.0.91", features = ["extra-traits", "full"] }
-proc-macro2 = "1.0.37"
+syn = { version = "1.0.96", features = ["extra-traits", "full"] }
+proc-macro2 = "1.0.39"
 quote = "1.0.18"
 toml = "0.5.9"
 dirs = "4.0.0"

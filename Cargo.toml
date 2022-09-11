@@ -1,6 +1,6 @@
 [package]
 name = "jump-kun"
-version = "0.4.11"
+version = "0.4.12"
 authors = ["TakaakiFuruse <takaakifuruse@gmail.com>"]
 edition = "2018"
 description = "A simple directory jumper made by rust."
@@ -12,11 +12,11 @@ name = "jump-kun"
 path = "src/main.rs"
 
 [dependencies]
-jump-kun-macros={version = "0.1.1", path = "jump-kun-macros"}
+jump-kun-macros={version = "0.1.13", path = "jump-kun-macros"}
 jwalk= "0.6.0"
 skim = "0.9.4"
-serde_json= "1.0.79"
-serde = { version = "1.0.136", features = ["derive"] }
+serde_json= "1.0.81"
+serde = { version = "1.0.137", features = ["derive"] }
 dirs = "4.0.0"
 sled = "0.34.7"
 ignore = "0.4.18"
