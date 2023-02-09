@@ -1,6 +1,6 @@
 [package]
 name = "jump-kun-macros"
-version = "0.1.14"
+version = "0.1.15"
 authors = ["TakaakiFuruse <takaakifuruse@gmail.com>"]
 edition = "2018"
 description = "A crate for jump-kun. Parses jump-kun config file and creates fucntions."
