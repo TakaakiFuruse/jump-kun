@@ -13,8 +13,8 @@ license = "MIT"
 proc-macro = true
 
 [dependencies]
-syn = { version = "1.0.96", features = ["extra-traits", "full"] }
-proc-macro2 = "1.0.39"
-quote = "1.0.18"
-toml = "0.5.9"
+syn = { version = "1.0.107", features = ["extra-traits", "full"] }
+proc-macro2 = "1.0.51"
+quote = "1.0.23"
+toml = "0.5.11"
 dirs = "4.0.0"
