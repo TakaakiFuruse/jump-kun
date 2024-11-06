@@ -15,9 +15,9 @@ path = "src/main.rs"
 jump-kun-macros={version = "0.1.16", path = "jump-kun-macros"}
 jwalk= "0.8.1"
 skim = "0.10.4"
-serde_json= "1.0.107"
-serde = { version = "1.0.188", features = ["derive"] }
+serde_json= "1.0.132"
+serde = { version = "1.0.214", features = ["derive"] }
 dirs = "5.0.1"
 sled = "0.34.7"
-ignore = "0.4.20"
-anyhow = "1.0.75"
+ignore = "0.4.23"
+anyhow = "1.0.92"
